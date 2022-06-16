@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@codemirror/lang-css": "^6.0.0",
+    "@codemirror/lang-html": "^6.0.0",
+    "@codemirror/lang-javascript": "^6.0.0",
+    "@codemirror/lang-json": "^6.0.0",
+    "@codemirror/lang-xml": "^6.0.0",
+    "@codemirror/language-data": "^6.0.0",
+    "@codemirror/theme-one-dark": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "codemirror": "^6.0.0",
+    "rollup": "^2.75.6",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}
