@@ -7,9 +7,8 @@ import { css } from "@codemirror/lang-css";
 import { indentWithTab } from "@codemirror/commands";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { Compartment } from "@codemirror/state";
+import { EditorView } from "@codemirror/view";
 
-const theme = new Compartment();
-const language = new Compartment();
 import {
   lineNumbers,
   highlightActiveLineGutter,
@@ -40,7 +39,18 @@ import {
   completionKeymap,
 } from "@codemirror/autocomplete";
 
+const theme = new Compartment();
+const language = new Compartment();
 const SUPPORTED_LANGUAGES_MAP = { javascript, json, html, css, xml };
+
+const lightTheme = EditorView.theme(
+  {
+    "&": {
+      backgroundColor: "white",
+    },
+  },
+  { dark: false }
+);
 
 const editorView = new CodeMirror.EditorView({
   doc: "",
@@ -82,7 +92,7 @@ function getSupportedLanguages() {
 
 function setDarkMode(active) {
   editorView.dispatch({
-    effects: theme.reconfigure(active ? oneDark : []),
+    effects: theme.reconfigure(active ? oneDark : lightTheme),
   });
 }
 
