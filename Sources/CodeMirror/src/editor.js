@@ -43,7 +43,7 @@ import {
 const SUPPORTED_LANGUAGES_MAP = { javascript, json, html, css, xml };
 
 const editorView = new CodeMirror.EditorView({
-  doc: '{"fuck": 123}',
+  doc: "",
   extensions: [
     lineNumbers(),
     highlightActiveLineGutter(),
@@ -80,7 +80,7 @@ function getSupportedLanguages() {
   return Object.keys(SUPPORTED_LANGUAGES_MAP);
 }
 
-function toggleDarkTheme(active) {
+function setDarkMode(active) {
   editorView.dispatch({
     effects: theme.reconfigure(active ? oneDark : []),
   });
@@ -98,15 +98,10 @@ function setContent(text) {
   });
 }
 
-function getInt() {
-  return 1;
-}
-
 export {
-  toggleDarkTheme,
+  setDarkMode,
   setLanguage,
   getSupportedLanguages,
   setContent,
-  getInt,
   editorView,
 };

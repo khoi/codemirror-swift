@@ -26,7 +26,6 @@ public final class CodeMirrorWebView: NativeView {
         configuration.userContentController = userController
         let webView = WKWebView(frame: bounds, configuration: configuration)
         webView.navigationDelegate = self
-        webView.setValue(false, forKey: "drawsBackground")  // Prevent white flick
         return webView
     }()
 
@@ -49,6 +48,12 @@ public final class CodeMirrorWebView: NativeView {
                 functionString: "CodeMirror.setContent(value)",
                 args: ["value": value]
             )
+        )
+    }
+
+    public func setDarkMode(on: Bool) {
+        queueJavascriptFunction(
+            JavascriptFunction(functionString: "CodeMirror.setDarkMode(on)", args: ["on": on])
         )
     }
 

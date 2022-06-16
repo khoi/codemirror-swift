@@ -14,7 +14,7 @@ class EditorViewController: NSViewController {
     @IBOutlet weak var languagePopupButton: NSPopUpButton!
     @IBOutlet weak var codeMirrorView: CodeMirrorWebView!
 
-    private var cancellables: Set<AnyCancellable> = []
+    private var darkmode = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +27,11 @@ class EditorViewController: NSViewController {
             }
         }
 
+    }
+
+    @IBAction func toggleDarkMode(_ sender: Any) {
+        darkmode.toggle()
+        codeMirrorView.setDarkMode(on: darkmode)
     }
 
     @IBAction func languageChanged(_ sender: Any) {
