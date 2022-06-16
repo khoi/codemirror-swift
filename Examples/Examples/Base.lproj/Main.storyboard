@@ -710,16 +710,65 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="abZ-cT-WvM" customClass="CodeMirrorWebView" customModule="CodeMirror">
-                                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                                <rect key="frame" x="0.0" y="25" width="480" height="245"/>
                             </customView>
+                            <stackView orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lGn-ls-02I">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="25"/>
+                                <edgeInsets key="edgeInsets" left="8" right="8" top="0.0" bottom="0.0"/>
+                                <beginningViews>
+                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fv0-7b-MQU">
+                                        <rect key="frame" x="5" y="-1" width="78" height="25"/>
+                                        <popUpButtonCell key="cell" type="push" title="JSON" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" arrowPosition="arrowAtCenter" selectedItem="id1-cp-7pV" id="JAw-BR-BeO">
+                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="menu"/>
+                                            <menu key="menu" id="zUG-3W-XPY">
+                                                <items>
+                                                    <menuItem title="JSON" state="on" id="id1-cp-7pV"/>
+                                                    <menuItem title="Item 2" id="xGM-8B-uS4"/>
+                                                    <menuItem title="Item 3" id="iIp-jg-wdw"/>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                        <connections>
+                                            <action selector="languageChanged:" target="XfG-lQ-9wD" id="t2G-0b-LTl"/>
+                                        </connections>
+                                    </popUpButton>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YAB-VC-iD8">
+                                        <rect key="frame" x="80" y="-4" width="107" height="32"/>
+                                        <buttonCell key="cell" type="push" title="Fill with text" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Hvh-a8-vz2">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="fillWithTextPressed:" target="XfG-lQ-9wD" id="fAJ-O6-o4O"/>
+                                        </connections>
+                                    </button>
+                                </beginningViews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="lGn-ls-02I" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="DRq-IC-cLN"/>
                             <constraint firstItem="abZ-cT-WvM" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="ZfM-aB-Lpe"/>
+                            <constraint firstAttribute="trailing" secondItem="lGn-ls-02I" secondAttribute="trailing" id="ZzB-iR-Pqn"/>
                             <constraint firstItem="abZ-cT-WvM" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="hRd-WY-gUa"/>
+                            <constraint firstItem="lGn-ls-02I" firstAttribute="top" secondItem="abZ-cT-WvM" secondAttribute="bottom" id="mwe-AN-M7X"/>
+                            <constraint firstAttribute="bottom" secondItem="abZ-cT-WvM" secondAttribute="bottom" constant="25" id="tEs-i6-N85"/>
                             <constraint firstAttribute="trailing" secondItem="abZ-cT-WvM" secondAttribute="trailing" id="vWE-qI-6Xc"/>
-                            <constraint firstAttribute="bottom" secondItem="abZ-cT-WvM" secondAttribute="bottom" id="yyI-BT-m2G"/>
+                            <constraint firstAttribute="bottom" secondItem="lGn-ls-02I" secondAttribute="bottom" id="yb3-uz-N0P"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="codeMirrorView" destination="abZ-cT-WvM" id="f4L-Sj-2tQ"/>
+                        <outlet property="languagePopupButton" destination="fv0-7b-MQU" id="sRk-Rg-44N"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

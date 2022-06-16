@@ -40,7 +40,7 @@ import {
   completionKeymap,
 } from "@codemirror/autocomplete";
 
-const SUPPORTED_LANGUAGES = ["javascript", "json", "html", "css", "xml"];
+const SUPPORTED_LANGUAGES_MAP = { javascript, json, html, css, xml };
 
 const editorView = new CodeMirror.EditorView({
   doc: '{"fuck": 123}',
@@ -76,23 +76,37 @@ const editorView = new CodeMirror.EditorView({
   parent: document.body,
 });
 
+function getSupportedLanguages() {
+  return Object.keys(SUPPORTED_LANGUAGES_MAP);
+}
+
 function toggleDarkTheme(active) {
   editorView.dispatch({
     effects: theme.reconfigure(active ? oneDark : []),
   });
 }
 
-function changeLanguage(lang) {
-  const langMap = {
-    javascript: javascript,
-    json: json,
-    html: html,
-    css: css,
-    xml: xml,
-  };
+function setLanguage(lang) {
   editorView.dispatch({
-    effects: language.reconfigure(langMap[lang]()),
+    effects: language.reconfigure(SUPPORTED_LANGUAGES_MAP[lang]()),
   });
 }
 
-export { toggleDarkTheme, changeLanguage, SUPPORTED_LANGUAGES };
+function setContent(text) {
+  editorView.dispatch({
+    changes: { from: 0, to: editorView.state.doc.length, insert: text },
+  });
+}
+
+function getInt() {
+  return 1;
+}
+
+export {
+  toggleDarkTheme,
+  setLanguage,
+  getSupportedLanguages,
+  setContent,
+  getInt,
+  editorView,
+};

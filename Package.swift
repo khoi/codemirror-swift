@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
     name: "CodeMirror",
     platforms: [
-        .macOS(.v10_12),
-        .iOS(.v10),
+        .macOS(.v11),
+        .iOS(.v14),
     ],
     products: [
 
