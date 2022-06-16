@@ -26,6 +26,7 @@ public final class CodeMirrorWebView: NativeView {
         configuration.userContentController = userController
         let webView = WKWebView(frame: bounds, configuration: configuration)
         webView.navigationDelegate = self
+        webView.setValue(false, forKey: "drawsBackground") // prevent white flicks
         return webView
     }()
 
@@ -148,6 +149,7 @@ extension CodeMirrorWebView: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         delegate?.codeMirrorViewDidLoadSuccess(self)
         pageLoaded = true
+        webView.setValue(true, forKey: "drawsBackground")
         callPendingFunctions()
     }
 
