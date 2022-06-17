@@ -53,14 +53,15 @@ const SUPPORTED_LANGUAGES_MAP = {
   txt: () => [],
 };
 
-const lightTheme = EditorView.theme(
-  {
-    "&": {
-      backgroundColor: "white",
-    },
+const baseTheme = EditorView.baseTheme({
+  "&light": {
+    backgroundColor: "white", // the default codemirror light theme doesn't set this up
+    "color-scheme": "light",
   },
-  { dark: false }
-);
+  "&dark": {
+    "color-scheme": "dark",
+  },
+});
 
 const editorView = new CodeMirror.EditorView({
   doc: "",
@@ -92,6 +93,7 @@ const editorView = new CodeMirror.EditorView({
     ]),
     readOnly.of([]),
     lineWrapping.of([]),
+    baseTheme,
     theme.of(oneDark),
     language.of(json()),
     listener.of([]),
@@ -105,7 +107,7 @@ function getSupportedLanguages() {
 
 function setDarkMode(active) {
   editorView.dispatch({
-    effects: theme.reconfigure(active ? oneDark : lightTheme),
+    effects: theme.reconfigure(active ? [oneDark] : []),
   });
 }
 
