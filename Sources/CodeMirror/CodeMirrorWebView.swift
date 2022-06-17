@@ -76,6 +76,15 @@ public final class CodeMirrorWebView: NativeView {
         )
     }
 
+    public func setReadonly(_ value: Bool) {
+        queueJavascriptFunction(
+            JavascriptFunction(
+                functionString: "CodeMirror.setReadOnly(value)",
+                args: ["value": value]
+            )
+        )
+    }
+
     private func commonInit() {
         webview.allowsMagnification = false
         webview.translatesAutoresizingMaskIntoConstraints = false
@@ -118,13 +127,13 @@ public final class CodeMirrorWebView: NativeView {
 
     private func evaluateJavascript(function: JavascriptFunction) {
         // not sure why but callAsyncJavaScript always callback with result of nil
-        if function.args.isEmpty {
+        if let callback = function.callback {
             webview.evaluateJavaScript(function.functionString) { (response, error) in
                 if let error = error {
-                    function.callback?(Result<Any?, Error>.failure(error))
+                    callback(.failure(error))
                 }
                 else {
-                    function.callback?(Result<Any?, Error>.success(response))
+                    callback(.success(response))
                 }
             }
         }

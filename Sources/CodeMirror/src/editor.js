@@ -1,13 +1,13 @@
 import * as CodeMirror from "codemirror";
 import { javascript } from "@codemirror/lang-javascript";
+import { Compartment, EditorState } from "@codemirror/state";
+import { EditorView } from "@codemirror/view";
+import { indentWithTab } from "@codemirror/commands";
 import { html } from "@codemirror/lang-html";
 import { json } from "@codemirror/lang-json";
 import { xml } from "@codemirror/lang-xml";
 import { css } from "@codemirror/lang-css";
-import { indentWithTab } from "@codemirror/commands";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { Compartment } from "@codemirror/state";
-import { EditorView } from "@codemirror/view";
 
 import {
   lineNumbers,
@@ -42,6 +42,7 @@ import {
 const theme = new Compartment();
 const language = new Compartment();
 const listener = new Compartment();
+const readOnly = new Compartment();
 const SUPPORTED_LANGUAGES_MAP = { javascript, json, html, css, xml };
 
 const lightTheme = EditorView.theme(
@@ -81,6 +82,7 @@ const editorView = new CodeMirror.EditorView({
       ...completionKeymap,
       indentWithTab,
     ]),
+    readOnly.of([]),
     theme.of(oneDark),
     language.of(json()),
     listener.of([]),
@@ -122,11 +124,18 @@ function setListener(fn) {
   });
 }
 
+function setReadOnly(value) {
+  editorView.dispatch({
+    effects: readOnly.reconfigure(value ? EditorState.readOnly.of(true) : []),
+  });
+}
+
 export {
   setDarkMode,
   setLanguage,
   getSupportedLanguages,
   setContent,
   setListener,
+  setReadOnly,
   editorView,
 };

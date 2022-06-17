@@ -716,6 +716,16 @@
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="25"/>
                                 <edgeInsets key="edgeInsets" left="8" right="8" top="0.0" bottom="0.0"/>
                                 <endViews>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DFX-Ho-8k2">
+                                        <rect key="frame" x="135" y="4" width="88" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Read Only" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="sjm-m8-ZcR">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="readOnlyPressed:" target="XfG-lQ-9wD" id="WNu-7Z-gRq"/>
+                                        </connections>
+                                    </button>
                                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hCk-R3-sb4">
                                         <rect key="frame" x="224" y="-4" width="75" height="32"/>
                                         <buttonCell key="cell" type="push" title="Dark" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6br-4z-Mdg">
@@ -758,8 +768,10 @@
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -780,6 +792,7 @@
                     <connections>
                         <outlet property="codeMirrorView" destination="abZ-cT-WvM" id="f4L-Sj-2tQ"/>
                         <outlet property="languagePopupButton" destination="fv0-7b-MQU" id="sRk-Rg-44N"/>
+                        <outlet property="readOnlyButton" destination="DFX-Ho-8k2" id="ytM-1k-yDv"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

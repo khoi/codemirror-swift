@@ -12,6 +12,7 @@ import Combine
 class EditorViewController: NSViewController, CodeMirrorWebViewDelegate {
     @IBOutlet weak var languagePopupButton: NSPopUpButton!
     @IBOutlet weak var codeMirrorView: CodeMirrorWebView!
+    @IBOutlet weak var readOnlyButton: NSButton!
 
     private var darkmode = true
 
@@ -27,6 +28,7 @@ class EditorViewController: NSViewController, CodeMirrorWebViewDelegate {
         }
 
         codeMirrorView.delegate = self
+        updateReadOnly()
     }
 
     @IBAction func toggleDarkMode(_ sender: Any) {
@@ -53,6 +55,14 @@ class EditorViewController: NSViewController, CodeMirrorWebViewDelegate {
     @IBAction func fillWithTextPressed(_ sender: Any) {
         let text = exampleTexts[languagePopupButton.titleOfSelectedItem ?? ""]
         codeMirrorView.setContent(text ?? "\(languagePopupButton.titleOfSelectedItem ?? "nothing")")
+    }
+
+    @IBAction func readOnlyPressed(_ sender: Any) {
+        updateReadOnly()
+    }
+
+    private func updateReadOnly() {
+        codeMirrorView.setReadonly(readOnlyButton.state == .on)
     }
 
     func codeMirrorViewDidLoadSuccess(_ sender: CodeMirrorWebView) {
