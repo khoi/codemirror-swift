@@ -3,6 +3,7 @@
 ## ✨ Features
 
 - ⚡️ Minimal and fast
+- 🐘 Can deal with huge document
 - 📱 Supports macOS and iOS
 
 ## 📦 SPM

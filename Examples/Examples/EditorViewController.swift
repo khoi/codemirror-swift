@@ -64,7 +64,7 @@ class EditorViewController: NSViewController, CodeMirrorWebViewDelegate {
     }
 
     func codeMirrorViewDidChangeContent(_ sender: CodeMirrorWebView, content: String) {
-        print(content)
+        //        print(content) # print can be costly if document is huge
     }
 }
 
