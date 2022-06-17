@@ -13,7 +13,7 @@ Add `https://github.com/khoi/codemirror-swift` to your dependencies.
 
 ## 🚧 Modifications
 
-- Make changes to [](./Sources/CodeMirror/src/editor.js)
+- Make changes to [./Sources/CodeMirror/src/editor.js](./Sources/CodeMirror/src/editor.js)
 - Run `make build-codemirror`
 
 ## 🙇‍♂️ Credit
