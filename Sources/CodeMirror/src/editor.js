@@ -43,6 +43,7 @@ const theme = new Compartment();
 const language = new Compartment();
 const listener = new Compartment();
 const readOnly = new Compartment();
+const lineWrapping = new Compartment();
 const SUPPORTED_LANGUAGES_MAP = { javascript, json, html, css, xml };
 
 const lightTheme = EditorView.theme(
@@ -83,6 +84,7 @@ const editorView = new CodeMirror.EditorView({
       indentWithTab,
     ]),
     readOnly.of([]),
+    lineWrapping.of([]),
     theme.of(oneDark),
     language.of(json()),
     listener.of([]),
@@ -130,6 +132,12 @@ function setReadOnly(value) {
   });
 }
 
+function setLineWrapping(enabled) {
+  editorView.dispatch({
+    effects: lineWrapping.reconfigure(enabled ? EditorView.lineWrapping : []),
+  });
+}
+
 export {
   setDarkMode,
   setLanguage,
@@ -137,5 +145,6 @@ export {
   setContent,
   setListener,
   setReadOnly,
+  setLineWrapping,
   editorView,
 };

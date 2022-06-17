@@ -85,6 +85,15 @@ public final class CodeMirrorWebView: NativeView {
         )
     }
 
+    public func setLineWrapping(_ enabled: Bool) {
+        queueJavascriptFunction(
+            JavascriptFunction(
+                functionString: "CodeMirror.setLineWrapping(enabled)",
+                args: ["enabled": enabled]
+            )
+        )
+    }
+
     private func commonInit() {
         webview.allowsMagnification = false
         webview.translatesAutoresizingMaskIntoConstraints = false

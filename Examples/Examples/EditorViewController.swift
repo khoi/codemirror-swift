@@ -6,6 +6,7 @@ class EditorViewController: NSViewController, CodeMirrorWebViewDelegate {
     @IBOutlet weak var languagePopupButton: NSPopUpButton!
     @IBOutlet weak var codeMirrorView: CodeMirrorWebView!
     @IBOutlet weak var readOnlyButton: NSButton!
+    @IBOutlet weak var lineWrappingButton: NSButton!
 
     private var darkmode = true
 
@@ -22,6 +23,7 @@ class EditorViewController: NSViewController, CodeMirrorWebViewDelegate {
 
         codeMirrorView.delegate = self
         updateReadOnly()
+        updateLineWrapping()
     }
 
     @IBAction func toggleDarkMode(_ sender: Any) {
@@ -53,9 +55,16 @@ class EditorViewController: NSViewController, CodeMirrorWebViewDelegate {
     @IBAction func readOnlyPressed(_ sender: Any) {
         updateReadOnly()
     }
+    @IBAction func lineWrappingPressed(_ sender: Any) {
+        updateLineWrapping()
+    }
 
     private func updateReadOnly() {
         codeMirrorView.setReadonly(readOnlyButton.state == .on)
+    }
+
+    private func updateLineWrapping() {
+        codeMirrorView.setLineWrapping(lineWrappingButton.state == .on)
     }
 
     func codeMirrorViewDidLoadSuccess(_ sender: CodeMirrorWebView) {
