@@ -1,5 +1,3 @@
-🪞 Swift wrapper for CodeMirror 6
-
 ![](.github/demo.png)
 
 ## ✨ Features
