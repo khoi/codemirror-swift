@@ -1,4 +1,4 @@
-![](.github/demo.png)
+<p align="center"><img src=".github/demo.png" width="50%"></p>
 
 ## ✨ Features
 
