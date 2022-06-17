@@ -22,6 +22,18 @@
     </style>
   </head>
 
-  <body></body>
+  <body>
+    <script src="editor.bundle.js"></script>
+    <script>
+      if (window.webkit) {
+        window.webkit.messageHandlers.codeMirrorDidReady.postMessage(null);
+
+        CodeMirror.setListener((text) => {
+          window.webkit.messageHandlers.codeMirrorContentDidChange.postMessage(
+            text
+          );
+        });
+      }
+    </script>
+  </body>
 </html>
-<script src="editor.bundle.js"></script>

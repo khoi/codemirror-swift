@@ -41,6 +41,7 @@ import {
 
 const theme = new Compartment();
 const language = new Compartment();
+const listener = new Compartment();
 const SUPPORTED_LANGUAGES_MAP = { javascript, json, html, css, xml };
 
 const lightTheme = EditorView.theme(
@@ -82,6 +83,7 @@ const editorView = new CodeMirror.EditorView({
     ]),
     theme.of(oneDark),
     language.of(json()),
+    listener.of([]),
   ],
   parent: document.body,
 });
@@ -108,10 +110,23 @@ function setContent(text) {
   });
 }
 
+function setListener(fn) {
+  editorView.dispatch({
+    effects: listener.reconfigure(
+      EditorView.updateListener.of((v) => {
+        if (v.docChanged) {
+          fn(v.state.doc.toString());
+        }
+      })
+    ),
+  });
+}
+
 export {
   setDarkMode,
   setLanguage,
   getSupportedLanguages,
   setContent,
+  setListener,
   editorView,
 };

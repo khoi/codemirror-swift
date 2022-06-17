@@ -21,6 +21,9 @@ public final class CodeMirrorWebView: NativeView {
     private lazy var webview: WKWebView = {
         let preferences = WKPreferences()
         var userController = WKUserContentController()
+        userController.add(self, name: "codeMirrorDidReady")
+        userController.add(self, name: "codeMirrorContentDidChange")
+
         let configuration = WKWebViewConfiguration()
         configuration.preferences = preferences
         configuration.userContentController = userController
@@ -143,13 +146,28 @@ public final class CodeMirrorWebView: NativeView {
     }
 }
 
+extension CodeMirrorWebView: WKScriptMessageHandler {
+    public func userContentController(
+        _ userContentController: WKUserContentController,
+        didReceive message: WKScriptMessage
+    ) {
+        switch message.name {
+        case "codeMirrorDidReady":
+            pageLoaded = true
+            callPendingFunctions()
+        case "codeMirrorContentDidChange":
+            delegate?.codeMirrorViewDidChangeContent(self, content: message.body as? String ?? "")
+        default:
+            print("CodeMirrorWebView receive \(message.name) \(message.body)")
+        }
+    }
+}
+
 // MARK: WKNavigationDelegate
 
 extension CodeMirrorWebView: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         delegate?.codeMirrorViewDidLoadSuccess(self)
-        pageLoaded = true
-        callPendingFunctions()
     }
 
     public func webView(

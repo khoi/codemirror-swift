@@ -9,8 +9,7 @@ import AppKit
 import CodeMirror
 import Combine
 
-class EditorViewController: NSViewController {
-
+class EditorViewController: NSViewController, CodeMirrorWebViewDelegate {
     @IBOutlet weak var languagePopupButton: NSPopUpButton!
     @IBOutlet weak var codeMirrorView: CodeMirrorWebView!
 
@@ -27,6 +26,7 @@ class EditorViewController: NSViewController {
             }
         }
 
+        codeMirrorView.delegate = self
     }
 
     @IBAction func toggleDarkMode(_ sender: Any) {
@@ -53,6 +53,18 @@ class EditorViewController: NSViewController {
     @IBAction func fillWithTextPressed(_ sender: Any) {
         let text = exampleTexts[languagePopupButton.titleOfSelectedItem ?? ""]
         codeMirrorView.setContent(text ?? "\(languagePopupButton.titleOfSelectedItem ?? "nothing")")
+    }
+
+    func codeMirrorViewDidLoadSuccess(_ sender: CodeMirrorWebView) {
+
+    }
+
+    func codeMirrorViewDidLoadError(_ sender: CodeMirrorWebView, error: Error) {
+
+    }
+
+    func codeMirrorViewDidChangeContent(_ sender: CodeMirrorWebView, content: String) {
+        print(content)
     }
 }
 
