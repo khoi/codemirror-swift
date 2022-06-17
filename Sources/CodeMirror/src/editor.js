@@ -44,7 +44,14 @@ const language = new Compartment();
 const listener = new Compartment();
 const readOnly = new Compartment();
 const lineWrapping = new Compartment();
-const SUPPORTED_LANGUAGES_MAP = { javascript, json, html, css, xml };
+const SUPPORTED_LANGUAGES_MAP = {
+  javascript,
+  json,
+  html,
+  css,
+  xml,
+  txt: () => [],
+};
 
 const lightTheme = EditorView.theme(
   {
