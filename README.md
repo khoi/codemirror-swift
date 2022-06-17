@@ -4,6 +4,7 @@
 
 - ⚡️ Minimal and fast
 - 🐘 Can deal with huge document
+- 🧛‍♂️ Dark/light theme
 - 📱 Supports macOS and iOS
 
 ## 📦 SPM
