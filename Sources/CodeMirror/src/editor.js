@@ -110,8 +110,9 @@ function setDarkMode(active) {
 }
 
 function setLanguage(lang) {
+  let langFn = SUPPORTED_LANGUAGES_MAP[lang];
   editorView.dispatch({
-    effects: language.reconfigure(SUPPORTED_LANGUAGES_MAP[lang]()),
+    effects: language.reconfigure(langFn ? langFn() : []),
   });
 }
 
