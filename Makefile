@@ -1,7 +1,7 @@
 default: test
 
 build-codemirror:
-	cd ./Sources/CodeMirror/src && ./node_modules/.bin/rollup -c
+	cd ./Sources/CodeMirror/src && npm install && ./node_modules/.bin/rollup -c
 
 open-codemirror:
 	open ./Sources/CodeMirror/src/build/index.html
