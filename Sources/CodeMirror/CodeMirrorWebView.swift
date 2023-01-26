@@ -4,9 +4,11 @@ import WebKit
 #if canImport(AppKit)
     import AppKit
     public typealias NativeView = NSView
+    public typealias NativeRect = NSRect
 #elseif canImport(UIKit) && !os(watchOS)
     import UIKit
     public typealias NativeView = UIView
+    public typealias NativeRect = CGRect
 #endif
 
 public protocol CodeMirrorWebViewDelegate: AnyObject {
@@ -36,7 +38,7 @@ public final class CodeMirrorWebView: NativeView {
     private var pageLoaded = false
     private var pendingFunctions = [JavascriptFunction]()
 
-    public override init(frame frameRect: NSRect) {
+    public override init(frame frameRect: NativeRect) {
         super.init(frame: frameRect)
         commonInit()
     }
@@ -95,7 +97,9 @@ public final class CodeMirrorWebView: NativeView {
     }
 
     private func commonInit() {
+        #if canImport(AppKit)
         webview.allowsMagnification = false
+        #endif
         webview.translatesAutoresizingMaskIntoConstraints = false
         addSubview(webview)
 
