@@ -129,7 +129,7 @@ function setListener(fn) {
     effects: listener.reconfigure(
       EditorView.updateListener.of((v) => {
         if (v.docChanged) {
-          fn(v.state.doc.toString());
+          fn();
         }
       })
     ),

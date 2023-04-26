@@ -8,18 +8,15 @@ public typealias NativeView = UIViewRepresentable
 #endif
 
 public struct CodeMirrorView: NativeView {
-    @Binding public var content: String
     public var onLoadSuccess: (() -> ())?
     public var onLoadFailed: ((Error) -> ())?
-    public var onContentChange: ((String) -> ())?
+    public var onContentChange: (() -> ())?
     
     public init(
-        content: Binding<String>,
         onLoadSuccess: ( () -> Void)? = nil,
         onLoadFailed: ( (Error) -> Void)? = nil,
-        onContentChange: ( (String) -> Void)? = nil
+        onContentChange: ( () -> Void)? = nil
     ) {
-        self._content = content
         self.onLoadSuccess = onLoadSuccess
         self.onLoadFailed = onLoadFailed
         self.onContentChange = onContentChange
@@ -77,7 +74,6 @@ public struct CodeMirrorView: NativeView {
     }
     
     private func updateWebView(context: Context) {
-        context.coordinator.setContent(content)
     }
     
     public func makeCoordinator() -> Coordinator {
@@ -197,7 +193,7 @@ extension Coordinator: WKScriptMessageHandler {
             pageLoaded = true
             callPendingFunctions()
         case ScriptMessageName.codeMirrorContentDidChange:
-            parent.onContentChange?(message.body as? String ?? "")
+            parent.onContentChange?()
         default:
             print("CodeMirrorWebView receive \(message.name) \(message.body)")
         }

@@ -8,20 +8,17 @@
 import SwiftUI
 import CodeMirror
 
-struct ContentView: View {
-    @State private var content: String = "Hello World!"
-    
+struct ContentView: View {    
     var body: some View {
         CodeMirrorView(
-            content: $content,
             onLoadSuccess: {
                 print("@@@ \(#function)")
             },
             onLoadFailed: { error in
                 print("@@@ \(#function) \(error)")
             },
-            onContentChange: { content in
-//                print("@@@ \(#function) \(content)")
+            onContentChange: {
+                print("@@@ Content Did Change")
             }
         )
           .frame(maxWidth: .infinity, maxHeight: .infinity)
