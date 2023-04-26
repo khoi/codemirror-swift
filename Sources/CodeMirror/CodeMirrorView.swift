@@ -1,53 +1,85 @@
-import Foundation
+import SwiftUI
 import WebKit
 
-#if canImport(AppKit)
-    import AppKit
-    public typealias NativeView = NSView
-    public typealias NativeRect = NSRect
-#elseif canImport(UIKit) && !os(watchOS)
-    import UIKit
-    public typealias NativeView = UIView
-    public typealias NativeRect = CGRect
-#endif
-
-public protocol CodeMirrorWebViewDelegate: AnyObject {
-    func codeMirrorViewDidLoadSuccess(_ sender: CodeMirrorWebView)
-    func codeMirrorViewDidLoadError(_ sender: CodeMirrorWebView, error: Error)
-    func codeMirrorViewDidChangeContent(_ sender: CodeMirrorWebView, content: String)
-}
-
-public final class CodeMirrorWebView: NativeView {
-    public weak var delegate: CodeMirrorWebViewDelegate?
-
-    private lazy var webview: WKWebView = {
+public struct CodeMirrorView: NSViewRepresentable {
+    @Binding public var content: String
+    public var onLoadSuccess: (() -> ())?
+    public var onLoadFailed: ((Error) -> ())?
+    public var onContentChange: ((String) -> ())?
+    
+    public init(
+        content: Binding<String>,
+        onLoadSuccess: ( () -> Void)? = nil,
+        onLoadFailed: ( (Error) -> Void)? = nil,
+        onContentChange: ( (String) -> Void)? = nil
+    ) {
+        self._content = content
+        self.onLoadSuccess = onLoadSuccess
+        self.onLoadFailed = onLoadFailed
+        self.onContentChange = onContentChange
+    }
+    
+    public func makeNSView(context: Context) -> WKWebView {
+        createWebView(context: context)
+    }
+    
+    public func updateNSView(_ nsView: WKWebView, context: Context) {
+        updateWebView(context: context)
+    }
+    
+    private func createWebView(context: Context) -> WKWebView {
         let preferences = WKPreferences()
-        var userController = WKUserContentController()
-        userController.add(self, name: "codeMirrorDidReady")
-        userController.add(self, name: "codeMirrorContentDidChange")
+        let userController = WKUserContentController()
+        userController.add(context.coordinator, name: ScriptMessageName.codeMirrorDidReady)
+        userController.add(context.coordinator, name: ScriptMessageName.codeMirrorContentDidChange)
 
         let configuration = WKWebViewConfiguration()
         configuration.preferences = preferences
         configuration.userContentController = userController
-        let webView = WKWebView(frame: bounds, configuration: configuration)
-        webView.navigationDelegate = self
+        
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.navigationDelegate = context.coordinator
+        #if os(OSX)
         webView.setValue(false, forKey: "drawsBackground")  // prevent white flicks
-        return webView
-    }()
+        webView.allowsMagnification = false
+        #elseif os(iOS)
+        webView.isOpaque = false
+        #endif
+        
+        let indexURL = Bundle.module.url(
+            forResource: "index",
+            withExtension: "html",
+            subdirectory: "build"
+        )
+        
 
+        let baseURL = Bundle.module.url(forResource: "build", withExtension: nil)
+        let data = try! Data.init(contentsOf: indexURL!)
+        webView.load(data, mimeType: "text/html", characterEncodingName: "utf-8", baseURL: baseURL!)
+        context.coordinator.webView = webView
+        return webView
+    }
+    
+    private func updateWebView(context: Context) {
+        context.coordinator.setContent(content)
+    }
+    
+    public func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+}
+
+public class Coordinator: NSObject {
+    var parent: CodeMirrorView
+    var webView: WKWebView!
+    
     private var pageLoaded = false
     private var pendingFunctions = [JavascriptFunction]()
-
-    public override init(frame frameRect: NativeRect) {
-        super.init(frame: frameRect)
-        commonInit()
+    
+    init(parent: CodeMirrorView) {
+        self.parent = parent
     }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        commonInit()
-    }
-
+    
     public func setContent(_ value: String) {
         queueJavascriptFunction(
             JavascriptFunction(
@@ -95,33 +127,7 @@ public final class CodeMirrorWebView: NativeView {
             )
         )
     }
-
-    private func commonInit() {
-        #if canImport(AppKit)
-        webview.allowsMagnification = false
-        #endif
-        webview.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(webview)
-
-        NSLayoutConstraint.activate([
-            webview.leadingAnchor.constraint(equalTo: leadingAnchor),
-            webview.trailingAnchor.constraint(equalTo: trailingAnchor),
-            webview.topAnchor.constraint(equalTo: topAnchor),
-            webview.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-        ])
-
-        let indexURL = Bundle.module.url(
-            forResource: "index",
-            withExtension: "html",
-            subdirectory: "build"
-        )
-        let baseURL = Bundle.module.url(forResource: "build", withExtension: nil)
-
-        let data = try! Data.init(contentsOf: indexURL!)
-        webview.load(data, mimeType: "text/html", characterEncodingName: "utf-8", baseURL: baseURL!)
-    }
-
+    
     private func queueJavascriptFunction(_ function: JavascriptFunction) {
         if pageLoaded {
             evaluateJavascript(function: function)
@@ -130,18 +136,18 @@ public final class CodeMirrorWebView: NativeView {
             pendingFunctions.append(function)
         }
     }
-
+    
     private func callPendingFunctions() {
         for function in pendingFunctions {
             evaluateJavascript(function: function)
         }
         pendingFunctions.removeAll()
     }
-
+    
     private func evaluateJavascript(function: JavascriptFunction) {
         // not sure why but callAsyncJavaScript always callback with result of nil
         if let callback = function.callback {
-            webview.evaluateJavaScript(function.functionString) { (response, error) in
+            webView.evaluateJavaScript(function.functionString) { (response, error) in
                 if let error = error {
                     callback(.failure(error))
                 }
@@ -151,7 +157,7 @@ public final class CodeMirrorWebView: NativeView {
             }
         }
         else {
-            webview.callAsyncJavaScript(
+            webView.callAsyncJavaScript(
                 function.functionString,
                 arguments: function.args,
                 in: nil,
@@ -168,36 +174,31 @@ public final class CodeMirrorWebView: NativeView {
     }
 }
 
-extension CodeMirrorWebView: WKScriptMessageHandler {
-    public func userContentController(
-        _ userContentController: WKUserContentController,
-        didReceive message: WKScriptMessage
-    ) {
+extension Coordinator: WKScriptMessageHandler {
+    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         switch message.name {
-        case "codeMirrorDidReady":
+        case ScriptMessageName.codeMirrorDidReady:
             pageLoaded = true
             callPendingFunctions()
-        case "codeMirrorContentDidChange":
-            delegate?.codeMirrorViewDidChangeContent(self, content: message.body as? String ?? "")
+        case ScriptMessageName.codeMirrorContentDidChange:
+            parent.onContentChange?(message.body as? String ?? "")
         default:
             print("CodeMirrorWebView receive \(message.name) \(message.body)")
         }
     }
 }
 
-// MARK: WKNavigationDelegate
-
-extension CodeMirrorWebView: WKNavigationDelegate {
+extension Coordinator: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        delegate?.codeMirrorViewDidLoadSuccess(self)
+        parent.onLoadSuccess?()
     }
-
+    
     public func webView(
         _ webView: WKWebView,
         didFail navigation: WKNavigation!,
         withError error: Error
     ) {
-        delegate?.codeMirrorViewDidLoadError(self, error: error)
+        parent.onLoadFailed?(error)
     }
 
     public func webView(
@@ -205,20 +206,6 @@ extension CodeMirrorWebView: WKNavigationDelegate {
         didFailProvisionalNavigation navigation: WKNavigation!,
         withError error: Error
     ) {
-        delegate?.codeMirrorViewDidLoadError(self, error: error)
-    }
-}
-
-public typealias JavascriptCallback = (Result<Any?, Error>) -> Void
-private struct JavascriptFunction {
-
-    let functionString: String
-    let args: [String: Any]
-    let callback: JavascriptCallback?
-
-    init(functionString: String, args: [String: Any] = [:], callback: JavascriptCallback? = nil) {
-        self.functionString = functionString
-        self.args = args
-        self.callback = callback
+        parent.onLoadFailed?(error)
     }
 }
