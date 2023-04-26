@@ -6,10 +6,11 @@
 - 🐘 Can deal with huge document
 - 🧛‍♂️ Dark/light theme
 - 📱 Supports macOS and iOS
+- 🧑‍🎨 SwiftUI
 
 ## 📦 SPM
 
-Add `https://github.com/khoi/codemirror-swift` to your dependencies.
+Add `https://github.com/khoi/codemirror-swift.git` to your dependencies.
 
 ## 🚧 Modifications
 
