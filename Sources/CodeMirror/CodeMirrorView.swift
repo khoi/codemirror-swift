@@ -68,97 +68,52 @@ public struct CodeMirrorView: NativeView {
     }
 
     public func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
+        let coordinator = Coordinator(parent: self)
+
+        viewModel.executeJS = { fn, cb in
+            coordinator.queueJavascriptFunction(fn, callback: cb)
+        }
+        return coordinator
     }
 }
 
+@MainActor
 public class Coordinator: NSObject {
     var parent: CodeMirrorView
     var webView: WKWebView!
 
     private var pageLoaded = false
-    private var pendingFunctions = [JavascriptFunction]()
+    private var pendingFunctions = [(JavascriptFunction, JavascriptCallback?)]()
 
     init(parent: CodeMirrorView) {
         self.parent = parent
     }
 
-    public func getContent(_ callback: JavascriptCallback?) {
-        queueJavascriptFunction(
-            JavascriptFunction(
-                functionString: "CodeMirror.getContent()",
-                callback: callback
-            )
-        )
-    }
-
-    public func setContent(_ value: String) {
-        queueJavascriptFunction(
-            JavascriptFunction(
-                functionString: "CodeMirror.setContent(value)",
-                args: ["value": value]
-            )
-        )
-    }
-
-    public func setDarkMode(on: Bool) {
-        queueJavascriptFunction(
-            JavascriptFunction(functionString: "CodeMirror.setDarkMode(on)", args: ["on": on])
-        )
-    }
-
-    public func setLanguage(_ lang: String) {
-        queueJavascriptFunction(
-            JavascriptFunction(functionString: "CodeMirror.setLanguage(\"\(lang)\")")
-        )
-    }
-
-    public func getSupportedLanguages(_ callback: JavascriptCallback?) {
-        queueJavascriptFunction(
-            JavascriptFunction(
-                functionString: "CodeMirror.getSupportedLanguages()",
-                callback: callback
-            )
-        )
-    }
-
-    public func setReadonly(_ value: Bool) {
-        queueJavascriptFunction(
-            JavascriptFunction(
-                functionString: "CodeMirror.setReadOnly(value)",
-                args: ["value": value]
-            )
-        )
-    }
-
-    public func setLineWrapping(_ enabled: Bool) {
-        queueJavascriptFunction(
-            JavascriptFunction(
-                functionString: "CodeMirror.setLineWrapping(enabled)",
-                args: ["enabled": enabled]
-            )
-        )
-    }
-
-    private func queueJavascriptFunction(_ function: JavascriptFunction) {
+    internal func queueJavascriptFunction(
+        _ function: JavascriptFunction,
+        callback: JavascriptCallback? = nil
+    ) {
         if pageLoaded {
-            evaluateJavascript(function: function)
+            evaluateJavascript(function: function, callback: callback)
         }
         else {
-            pendingFunctions.append(function)
+            pendingFunctions.append((function, callback))
         }
     }
 
     private func callPendingFunctions() {
-        for function in pendingFunctions {
-            evaluateJavascript(function: function)
+        for (function, callback) in pendingFunctions {
+            evaluateJavascript(function: function, callback: callback)
         }
         pendingFunctions.removeAll()
     }
 
-    private func evaluateJavascript(function: JavascriptFunction) {
+    private func evaluateJavascript(
+        function: JavascriptFunction,
+        callback: JavascriptCallback? = nil
+    ) {
         // not sure why but callAsyncJavaScript always callback with result of nil
-        if let callback = function.callback {
+        if let callback = callback {
             webView.evaluateJavaScript(function.functionString) { (response, error) in
                 if let error = error {
                     callback(.failure(error))
@@ -177,9 +132,9 @@ public class Coordinator: NSObject {
             ) { (result) in
                 switch result {
                 case .failure(let error):
-                    function.callback?(.failure(error))
+                    callback?(.failure(error))
                 case .success(let data):
-                    function.callback?(.success(data))
+                    callback?(.success(data))
                 }
             }
         }
