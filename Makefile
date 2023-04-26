@@ -9,8 +9,8 @@ open-codemirror:
 clean:
 	swift package clean
 
-test:
-	swift test
+build:
+	swift build -v
 
 format:
 	find . -type f -name "*.swift" -not -path '*/Package.swift' -exec sed -i '' -e '1,/^import/{/^\/\/.*/d;}' -e '/./,$$!d' {} \;

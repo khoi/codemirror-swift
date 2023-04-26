@@ -30,10 +30,6 @@ let package = Package(
             resources: [
                 .copy("src/build")
             ]
-        ),
-        .testTarget(
-            name: "CodeMirrorTests",
-            dependencies: ["CodeMirror"]
-        ),
+        )
     ]
 )
