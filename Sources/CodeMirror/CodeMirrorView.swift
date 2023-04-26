@@ -7,6 +7,7 @@ import WebKit
     public typealias NativeView = UIViewRepresentable
 #endif
 
+@MainActor
 public struct CodeMirrorView: NativeView {
     @ObservedObject public var viewModel: CodeMirrorViewModel
 
@@ -65,10 +66,34 @@ public struct CodeMirrorView: NativeView {
     }
 
     private func updateWebView(context: Context) {
+        context.coordinator.queueJavascriptFunction(
+            JavascriptFunction(
+                functionString: "CodeMirror.setDarkMode(value)",
+                args: ["value": viewModel.darkMode]
+            )
+        )
+        context.coordinator.queueJavascriptFunction(
+            JavascriptFunction(
+                functionString: "CodeMirror.setLineWrapping(value)",
+                args: ["value": viewModel.lineWrapping]
+            )
+        )
+        context.coordinator.queueJavascriptFunction(
+            JavascriptFunction(
+                functionString: "CodeMirror.setReadOnly(value)",
+                args: ["value": viewModel.readOnly]
+            )
+        )
+        context.coordinator.queueJavascriptFunction(
+            JavascriptFunction(
+                functionString: "CodeMirror.setLanguage(value)",
+                args: ["value": viewModel.language.rawValue]
+            )
+        )
     }
 
     public func makeCoordinator() -> Coordinator {
-        let coordinator = Coordinator(parent: self)
+        let coordinator = Coordinator(parent: self, viewModel: viewModel)
 
         viewModel.executeJS = { fn, cb in
             coordinator.queueJavascriptFunction(fn, callback: cb)
@@ -80,13 +105,15 @@ public struct CodeMirrorView: NativeView {
 @MainActor
 public class Coordinator: NSObject {
     var parent: CodeMirrorView
+    var viewModel: CodeMirrorViewModel
     var webView: WKWebView!
 
     private var pageLoaded = false
     private var pendingFunctions = [(JavascriptFunction, JavascriptCallback?)]()
 
-    init(parent: CodeMirrorView) {
+    init(parent: CodeMirrorView, viewModel: CodeMirrorViewModel) {
         self.parent = parent
+        self.viewModel = viewModel
     }
 
     internal func queueJavascriptFunction(
