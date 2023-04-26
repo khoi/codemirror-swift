@@ -92,6 +92,15 @@ public class Coordinator: NSObject {
         self.parent = parent
     }
     
+    public func getContent(_ callback: JavascriptCallback?) {
+        queueJavascriptFunction(
+            JavascriptFunction(
+                functionString: "CodeMirror.getContent()",
+                callback: callback
+            )
+        )
+    }
+    
     public func setContent(_ value: String) {
         queueJavascriptFunction(
             JavascriptFunction(

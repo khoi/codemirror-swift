@@ -124,6 +124,10 @@ function setContent(text) {
   });
 }
 
+function getContent() {
+  return editorView.state.doc.toString();
+}
+
 function setListener(fn) {
   editorView.dispatch({
     effects: listener.reconfigure(
@@ -153,6 +157,7 @@ export {
   setLanguage,
   getSupportedLanguages,
   setContent,
+  getContent,
   setListener,
   setReadOnly,
   setLineWrapping,
