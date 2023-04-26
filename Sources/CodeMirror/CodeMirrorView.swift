@@ -1,7 +1,13 @@
 import SwiftUI
 import WebKit
 
-public struct CodeMirrorView: NSViewRepresentable {
+#if canImport(AppKit)
+public typealias NativeView = NSViewRepresentable
+#elseif canImport(UIKit)
+public typealias NativeView = UIViewRepresentable
+#endif
+
+public struct CodeMirrorView: NativeView {
     @Binding public var content: String
     public var onLoadSuccess: (() -> ())?
     public var onLoadFailed: ((Error) -> ())?
@@ -19,6 +25,7 @@ public struct CodeMirrorView: NSViewRepresentable {
         self.onContentChange = onContentChange
     }
     
+    #if canImport(AppKit)
     public func makeNSView(context: Context) -> WKWebView {
         createWebView(context: context)
     }
@@ -26,7 +33,16 @@ public struct CodeMirrorView: NSViewRepresentable {
     public func updateNSView(_ nsView: WKWebView, context: Context) {
         updateWebView(context: context)
     }
+    #elseif canImport(UIKit)
+    public func makeUIView(context: Context) -> WKWebView {
+        createWebView(context: context)
+    }
     
+    public func updateUIView(_ nsView: WKWebView, context: Context) {
+        updateWebView(context: context)
+    }
+    #endif
+
     private func createWebView(context: Context) -> WKWebView {
         let preferences = WKPreferences()
         let userController = WKUserContentController()
