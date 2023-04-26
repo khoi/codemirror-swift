@@ -1,27 +1,25 @@
-//
-//  ContentView.swift
-//  Examples
-//
-//  Created by khoi on 4/26/23.
-//
-
-import SwiftUI
 import CodeMirror
+import SwiftUI
 
-struct ContentView: View {    
+struct ContentView: View {
+
+    private var viewModel = CodeMirrorViewModel(
+        onLoadSuccess: {
+            print("@@@ \(#function)")
+        },
+        onLoadFailed: { error in
+            print("@@@ \(#function) \(error)")
+        },
+        onContentChange: {
+            print("@@@ Content Did Change")
+        }
+    )
+
     var body: some View {
         CodeMirrorView(
-            onLoadSuccess: {
-                print("@@@ \(#function)")
-            },
-            onLoadFailed: { error in
-                print("@@@ \(#function) \(error)")
-            },
-            onContentChange: {
-                print("@@@ Content Did Change")
-            }
+            viewModel
         )
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
