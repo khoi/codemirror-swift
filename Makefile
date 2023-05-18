@@ -1,4 +1,4 @@
-default: test
+default: build
 
 build-codemirror:
 	cd ./Sources/CodeMirror/src && npm install && ./node_modules/.bin/rollup -c
@@ -6,11 +6,13 @@ build-codemirror:
 open-codemirror:
 	open ./Sources/CodeMirror/src/build/index.html
 
+build-swift:
+	swift build -v
+
 clean:
 	swift package clean
 
-build:
-	swift build -v
+build: build-codemirror build-swift
 
 format:
 	find . -type f -name "*.swift" -not -path '*/Package.swift' -exec sed -i '' -e '1,/^import/{/^\/\/.*/d;}' -e '/./,$$!d' {} \;
